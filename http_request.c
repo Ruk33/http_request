@@ -42,7 +42,7 @@ char *http_request_body(char *src)
         return 0;
     int crlf = '\r' + '\n';
     char *body = src;
-    // skip first line
+    // skip first line (ie, GET /path HTTP...)
     while (!isspace(*body) && body++);
     while (isspace(*body) && body++);
     // minimum size is 4 bytes (two crlf)
