@@ -90,22 +90,9 @@ int http_request_is_partial(char *src)
     if (!src)
         return 1;
     int crlf = '\r' + '\n';
-    char *body = src;
-    // skip first line
-    while (!isspace(*body) && body++);
-    while (isspace(*body) && body++);
-    // minimum size is 4 bytes (two crlf)
-    if (body - src < 4)
+    char *body = http_request_body(src);
+    if (!body)
         return 1;
-    // find last two crlf characters.
-    while (*body &&
-           !((*(body - 3) + *(body - 2)) == crlf &&
-             (*(body - 1) + *(body - 0)) == crlf) &&
-           body++);
-    if (!*body)
-        return 1;
-    // skip last new line. start at the body.
-    body++;
     int body_len = http_request_body_len(src);
     // no content length, then the entire request was read.
     if (body_len == -2)
