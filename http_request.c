@@ -64,24 +64,24 @@ enum http_request_method http_request_get_method(char *src)
 {
     if (!src)
         return METHOD_UNKNOWN;
-    if (strcmp(src, "GET ") == 0)
+    if (strncmp(src, "GET ", sizeof("GET")) == 0)
         return METHOD_GET;
-    if (strcmp(src, "HEAD ") == 0)
-        return METHOD_HEAD;
-    if (strcmp(src, "POST ") == 0)
+    if (strncmp(src, "POST ", sizeof("POST")) == 0)
         return METHOD_POST;
-    if (strcmp(src, "PUT ") == 0)
-        return METHOD_PUT;
-    if (strcmp(src, "DELETE ") == 0)
-        return METHOD_DELETE;
-    if (strcmp(src, "CONNECT ") == 0)
-        return METHOD_CONNECT;
-    if (strcmp(src, "OPTIONS ") == 0)
-        return METHOD_OPTIONS;
-    if (strcmp(src, "TRACE ") == 0)
-        return METHOD_TRACE;
-    if (strcmp(src, "PATCH ") == 0)
+    if (strncmp(src, "PATCH ", sizeof("PATCH")) == 0)
         return METHOD_PATCH;
+    if (strncmp(src, "PUT ", sizeof("PUT")) == 0)
+        return METHOD_PUT;
+    if (strncmp(src, "DELETE ", sizeof("DELETE")) == 0)
+        return METHOD_DELETE;
+    if (strncmp(src, "HEAD ", sizeof("HEAD")) == 0)
+        return METHOD_HEAD;
+    if (strncmp(src, "CONNECT ", sizeof("CONNECT")) == 0)
+        return METHOD_CONNECT;
+    if (strncmp(src, "OPTIONS ", sizeof("OPTIONS")) == 0)
+        return METHOD_OPTIONS;
+    if (strncmp(src, "TRACE ", sizeof("TRACE")) == 0)
+        return METHOD_TRACE;
     return METHOD_UNKNOWN;
 }
 
