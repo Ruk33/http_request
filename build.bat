@@ -1,1 +1,1 @@
-zig cc main.c -lc
+zig cc main.c http_request.c -lc
