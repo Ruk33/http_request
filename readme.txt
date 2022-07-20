@@ -1,8 +1,9 @@
 HTTP REQUEST
-  simple http request to know:
+  simple lib to know:
   - the method of a request (GET, POST, etc.)
-  - if a path matches (uri, /my/path.html)
-  - if the request is complete or partial
+  - if a path matches (ie, is uri /my/path.html?)
+  - if the request is complete or partial.
+  - start of the body.
 
 NOTES
   - no memory is allocated.
