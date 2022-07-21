@@ -3,7 +3,7 @@
 #include <ctype.h> // tolower, isspace
 #include "http_request.h"
 
-int http_request_body_len(char *src)
+int http_request_content_length(char *src)
 {
     char *content_length_key = "content-length:";
     int partial = -1;
@@ -93,13 +93,13 @@ int http_request_is_partial(char *src)
     char *body = http_request_body(src);
     if (!body)
         return 1;
-    int body_len = http_request_body_len(src);
+    int content_len = http_request_content_length(src);
     // no content length, then the entire request was read.
-    if (body_len == -2)
+    if (content_len == -2)
         return 0;
-    if (body_len == -1)
+    if (content_len == -1)
         return 1;
-    return strlen(body) < body_len;
+    return strlen(body) < content_len;
 }
 
 int http_request_matches_path(char *src, char *path)

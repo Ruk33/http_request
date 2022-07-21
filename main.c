@@ -25,6 +25,7 @@ int main(int argc, char **argv)
         "\r\n"
         ;
     assert(http_request_get_method(request) == METHOD_GET);
+    assert(http_request_content_length(request) == -2);
     assert(!http_request_is_partial(request));
     assert(http_request_matches_path(request, "/my/complex/path.html"));
     
@@ -46,8 +47,16 @@ int main(int argc, char **argv)
         "\r\n"
         "1234567" // partial
         ;
-    assert(http_request_body_len(request) == 8);
+    assert(http_request_content_length(request) == 8);
     assert(http_request_is_partial(request));
+    
+    // partial content-length
+    request = 
+        "POST /my/path.html HTTP/1.1\r\n"
+        "User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\r\n"
+        "Content-Length: 8" // partial
+        ;
+    assert(http_request_content_length(request) == -1);
     
     return 0;
 }

@@ -21,7 +21,7 @@ enum http_request_method {
 // meaning, the tag was found but couldn't be
 // fully read.
 // -2 is returned if no content lenght header was found.
-int http_request_body_len(char *request);
+int http_request_content_length(char *request);
 // get a pointer to the beginning of the body (past headers)
 // if the request is partial, NULL is returned.
 char *http_request_body(char *request);
