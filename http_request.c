@@ -1,5 +1,6 @@
 #include <stdlib.h> // atoi
 #include <string.h> // strlen
+#include <stdarg.h> // va args
 #include <ctype.h> // tolower, isspace
 #include "http_request.h"
 
@@ -102,20 +103,68 @@ int http_request_is_partial(char *src)
     return strlen(body) < content_len;
 }
 
-int http_request_matches_path(char *src, char *path)
+int http_request_matches_path_va(char *request, char *format, va_list va)
 {
-    if (!src)
+    if (!request)
         return 0;
-    if (!path)
+
+    if (!format)
         return 0;
-    // skip method
-    while (!isspace(*src++));
-    // the start of the path + length should
-    // end up in a space/newline if it matches.
-    // example: GET /my_path HTTP/1.1
-    size_t len = strlen(path);
-    if (!isspace(*(src + len)))
-        return 0;
-    return strncmp(src, path, len) == 0;
+
+    // find path
+    while (!isspace(*request++));
+
+    // try matching the route until the first space.
+    // example: GET /some/url HTTP/1.1\r\n
+    while (!isspace(*request)) {
+        if (format[0] == '%' && format[1] == 's') {
+            format++;
+            format++;
+
+            char *dest = va_arg(va, char *);
+            char *tail = dest;
+
+            char terminator = format[0];
+
+            while (request[0] != terminator)
+                *tail++ = *request++;
+
+            int nothing_was_copied = dest == tail;
+
+            if (nothing_was_copied)
+                return 0;
+
+            *tail = 0;
+        } else if (format[0] == '%' && format[1] == 'd') {
+            format++;
+            format++;
+
+            int *dest = va_arg(va, int *);
+
+            int number_was_found = sscanf(request, "%d", dest);
+
+            if (!number_was_found)
+                return 0;
+
+            while (isdigit(request[0]))
+                request++;
+        }
+
+        if (request[0] != format[0])
+            return 0;
+
+        request++;
+        format++;
+    }
+
+    return 1;
 }
 
+int http_request_matches_path(char *src, char *fmt, ...)
+{
+    va_list va;
+    va_start(va, fmt);
+    int matches = http_request_matches_path_va(src, fmt, va);
+    va_end(va);
+    return matches;
+}

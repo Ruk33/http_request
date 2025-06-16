@@ -21,7 +21,7 @@ enum http_request_method {
 // -1 is returned if it's a partial read,
 // meaning, the tag was found but couldn't be
 // fully read.
-// -2 is returned if no content lenght header was found.
+// -2 is returned if no content length header was found.
 int http_request_content_length(char *request);
 // get a pointer to the beginning of the body (past headers)
 // if the request is partial, NULL is returned.
@@ -36,6 +36,14 @@ enum http_request_method http_request_get_method(char *request);
 // crlf characters.
 int http_request_is_partial(char *request);
 // check if the request matches a particular uri.
-int http_request_matches_path(char *request, char *path);
+// 1 if the uri matches.
+// 0 if the uri does not match.
+// example: 
+// int user_id = 0;
+// http_request_matches_path(request, "/users/%d/update", &user_id);
+// given a uri "/users/42/update", user_id will be 42.
+// supported formats: %s for string, %d for integers.
+int http_request_matches_path_va(char *request, char *format, va_list params);
+int http_request_matches_path(char *src, char *fmt, ...);
 
 #endif //HTTP_REQUEST_H

@@ -1,21 +1,24 @@
 #include <assert.h>
 #include <stdio.h>
-#include "http_request.h"
+#include "http_request.c"
 
 int main(int argc, char **argv)
 {
     char *request =
-        "GET /hello.html HTTP/1.1\r\n"
+        "GET /users/42/edit/and_return HTTP/1.1\r\n"
         "User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\r\n"
         "Content-Length: 8\r\n"
         "\r\n"
         "12345678"
         ;
+    char user_action[32];
+    int user_id = 0;
     printf("method = %d, is partial: %s\n",
            http_request_get_method(request),
            http_request_is_partial(request) ? "true" : "false");
-    printf("matches '%s' route: %s\n", "/hello.html",
-           http_request_matches_path(request, "/hello.html") ? "true" : "false");
+    printf("matches '%s' route: %s\n", "/users/42/edit/and_return",
+           http_request_matches_path(request, "/users/%d/%s/and_return", &user_id, user_action) ? "true" : "false");
+    printf("user id: %d, user action: '%s'\n", user_id, user_action);
     printf("body: '%s'\n", http_request_body(request));
     
     // tests
@@ -57,6 +60,8 @@ int main(int argc, char **argv)
         "Content-Length: 8" // partial
         ;
     assert(http_request_content_length(request) == -1);
+
+    printf("all done\n");
     
     return 0;
 }
